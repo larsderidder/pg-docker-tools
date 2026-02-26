@@ -109,6 +109,9 @@ CFG_ROOT=".databases.$DB_ID.$TARGET_ENV"
 "$ROOT_DIR/bin/confirm_env.sh" "$TARGET_ENV"
 
 [[ -f "$DUMP_PATH" || -d "$DUMP_PATH" ]] || { echo "Dump path not found: $DUMP_PATH"; exit 1; }
+# Resolve to absolute, then compute path relative to $PWD for the Docker /work mount
+DUMP_PATH="$(realpath "$DUMP_PATH")"
+DOCKER_DUMP_PATH="$(realpath --relative-to="$PWD" "$DUMP_PATH")"
 
 PASSWORD_VAR="${PASS_ENV_NAME:-PGPASSWORD_${DB_ID^^}_${TARGET_ENV^^}}"
 export PGPASSWORD="$(eval echo \$$PASSWORD_VAR)"
@@ -166,7 +169,7 @@ TOC_TEXT=$(
       --user "$(id -u):$(id -g)" \
       -v "$PWD:/work" \
       postgres:${PG_VER} \
-      pg_restore -l "/work/$DUMP_PATH"
+      pg_restore -l "/work/$DOCKER_DUMP_PATH"
   else
     pg_restore -l "$DUMP_PATH"
   fi
@@ -220,7 +223,7 @@ if [[ "$RUN_MODE" == "docker" ]]; then
       -h "$HOST" \
       -U "$DB_USER" \
       -d "$DB_NAME" \
-      "/work/$DUMP_PATH"
+      "/work/$DOCKER_DUMP_PATH"
 else
   pg_restore \
     -v \

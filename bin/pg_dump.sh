@@ -213,7 +213,11 @@ if [[ -n "$JOBS" && "$FORMAT_FLAG" != "-Fd" ]]; then
 fi
 
 BASE_DIR="${OUTPUT_DIR:-backups/${DB_ID}/${TARGET_ENV}}"
+# Resolve to absolute so the Docker /work relative path is always computable
+BASE_DIR="$(realpath -m "$BASE_DIR")"
 OUT="${BASE_DIR}/${DB_ID}_${TS}${MODE_TAG}.${OUT_EXT}"
+# Path inside the container: must be relative to $PWD (the /work mount root)
+DOCKER_OUT="$(realpath -m --relative-to="$PWD" "$OUT")"
 
 JOBS_ARGS=()
 [[ -n "$JOBS" ]] && JOBS_ARGS+=(--jobs "$JOBS")
@@ -266,7 +270,7 @@ if [[ "$RUN_MODE" == "docker" ]]; then
       -h "$HOST" \
       -U "$DB_USER" \
       -d "$DB_NAME" \
-      -f "/work/$OUT"
+      -f "/work/$DOCKER_OUT"
 else
   pg_dump \
     -v \
