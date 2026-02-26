@@ -118,7 +118,7 @@ PG_VER=$(yq -r "$CFG_ROOT.pg_version" "$CONF_PATH")
 HOST=$(yq -r "$CFG_ROOT.host" "$CONF_PATH")
 DB_NAME=$(yq -r "$CFG_ROOT.db" "$CONF_PATH")
 DB_USER=$(yq -r "$CFG_ROOT.user" "$CONF_PATH")
-NETWORK=$(yq -r "$CFG_ROOT.network // """ "$CONF_PATH")
+NETWORK=$(yq -r "${CFG_ROOT}.network // \"\"" "$CONF_PATH")
 
 CLEAN_ARGS=(--clean --if-exists)
 if [[ "$MODE" == "--no-clean" ]]; then
