@@ -50,6 +50,6 @@ log "Running dump"
 DUMP_FILE=$(ls -1t "$SCRIPT_DIR/backups/app/local"/*.dump | head -n 1)
 
 log "Running restore"
-"$ROOT_DIR/bin/pg_restore.sh" app local "$DUMP_FILE" --config "$SCRIPT_DIR/config.yaml" --no-clean
+"$ROOT_DIR/bin/pg_restore.sh" app local "$DUMP_FILE" --config "$SCRIPT_DIR/config.yaml"
 
 log "Integration test completed"
