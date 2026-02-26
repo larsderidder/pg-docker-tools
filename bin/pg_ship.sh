@@ -5,7 +5,7 @@ usage() {
   cat <<'USAGE'
 Usage: pg_ship.sh <dump_path> [options]
 
-Ships a dump file or directory to an S3-compatible bucket (AWS S3, Garage, MinIO, etc.).
+Ships a dump file or directory to an S3-compatible bucket (AWS S3, Garage, Tigris, Cloudflare R2, etc.).
 
 Uses the AWS CLI under the hood. Set credentials via environment variables:
   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
@@ -13,7 +13,7 @@ Uses the AWS CLI under the hood. Set credentials via environment variables:
 Options:
   --bucket <name>          Target bucket name (required if not set in config)
   --prefix <path>          Key prefix inside the bucket (default: "pgbackups")
-  --endpoint <url>         S3 endpoint URL (required for Garage, MinIO, etc.)
+  --endpoint <url>         S3 endpoint URL (required for Garage, Tigris, R2, etc.)
   --config <path>          Path to config.yaml (reads ship.bucket / ship.prefix / ship.endpoint)
   --no-checksum            Skip uploading the .sha256 file alongside the dump
   --delete-after           Delete the local dump after a successful upload

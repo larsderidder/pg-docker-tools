@@ -78,7 +78,7 @@ pg_restore -l backups/app/prod/app_20240101_120000.dump > toc.list
 
 ## Shipping dumps to S3
 
-`pg_ship.sh` uploads a dump file or directory to any S3-compatible store: AWS S3, [Garage](https://garagehq.deuxfleurs.fr/), MinIO, Tigris, Cloudflare R2, etc.
+`pg_ship.sh` uploads a dump file or directory to any S3-compatible store: AWS S3, [Garage](https://garagehq.deuxfleurs.fr/), Tigris, Cloudflare R2, etc.
 
 ### Requirements
 
@@ -108,7 +108,7 @@ pg_ship.sh backups/app/prod/app_20260101_020000.dump
 pg_ship.sh backups/app/prod/app_20260101_020000.dump \
   --bucket my-backups --prefix pgbackups/app/prod
 
-# Ship to Garage (or MinIO, R2, Tigris, etc.)
+# Ship to Garage (or R2, Tigris, etc.)
 pg_ship.sh backups/app/prod/app_20260101_020000.dump \
   --bucket my-backups \
   --endpoint https://s3.garage.example.com
