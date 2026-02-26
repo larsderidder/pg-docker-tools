@@ -51,6 +51,11 @@ require_cmd() {
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONF_DEFAULT="$ROOT_DIR/config.yaml"
 
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
 DUMP_PATH="${1:-}"
 shift || true
 
