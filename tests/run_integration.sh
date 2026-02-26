@@ -45,7 +45,7 @@ docker exec "$CONTAINER_ID" psql -U postgres -d pgtools_test -c "CREATE TABLE IF
 docker exec "$CONTAINER_ID" psql -U postgres -d pgtools_test -c "INSERT INTO demo(name) VALUES('alpha') ON CONFLICT DO NOTHING;"
 
 log "Running dump"
-"$ROOT_DIR/bin/pg_dump.sh" app local --config "$SCRIPT_DIR/config.yaml" --output-dir "$SCRIPT_DIR/backups"
+"$ROOT_DIR/bin/pg_dump.sh" app local --config "$SCRIPT_DIR/config.yaml" --output-dir "$SCRIPT_DIR/backups/app/local"
 
 DUMP_FILE=$(ls -1t "$SCRIPT_DIR/backups/app/local"/*.dump | head -n 1)
 
