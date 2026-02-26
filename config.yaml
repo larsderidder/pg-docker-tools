@@ -1,0 +1,41 @@
+defaults:
+  dump_format: "custom"
+
+# Example configuration. Duplicate entries for each environment you use.
+databases:
+  app:
+    local:
+      pg_version: "16"
+      host: localhost
+      db: app
+      user: app
+      network: ""
+    staging:
+      pg_version: "16"
+      host: 127.0.0.1
+      db: app_staging
+      user: app
+    prod:
+      pg_version: "16"
+      host: db.example.com
+      db: app
+      user: app
+      exclude_data:
+        - audit_log
+        - job_log
+
+  analytics:
+    local:
+      pg_version: "16"
+      host: localhost
+      db: analytics
+      user: analytics
+      network: ""
+    prod:
+      pg_version: "16"
+      host: analytics.example.com
+      db: analytics
+      user: analytics
+      exclude_data:
+        - large_events
+        - raw_metrics

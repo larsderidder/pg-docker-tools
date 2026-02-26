@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pgtools-restore-once
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: restore
+          image: pg-docker-tools:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -c
+          args:
+            - >-
+              /opt/pgtools/pg_restore.sh app prod /work/backups/app/prod/REPLACE_ME.dump --mode host
+              --config /opt/pgtools/config.yaml
+              --no-clean
+          envFrom:
+            - secretRef:
+                name: pgtools-secrets
+          volumeMounts:
+            - name: backups
+              mountPath: /work/backups
+            - name: config
+              mountPath: /opt/pgtools/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: backups
+          persistentVolumeClaim:
+            claimName: pgtools-backups
+        - name: config
+          configMap:
+            name: pgtools-config

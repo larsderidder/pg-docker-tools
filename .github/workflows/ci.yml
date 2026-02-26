@@ -1,0 +1,33 @@
+name: pg-docker-tools
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo curl -fsSL -o /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Smoke tests
+        run: |
+          bash tests/test_smoke.sh
+
+      - name: Integration test (docker compose)
+        run: |
+          bash tests/run_integration.sh
+
+      - name: Build image
+        run: |
+          docker build -t pg-docker-tools:ci \
+            --build-arg PG_CLIENT_VERSION=16 \
+            --build-arg YQ_VERSION=v4.44.1 \
+            .

@@ -1,0 +1,11 @@
+defaults:
+  dump_format: "custom"
+
+databases:
+  app:
+    local:
+      pg_version: "16"
+      host: localhost
+      db: pgtools_test
+      user: postgres
+      network: ""

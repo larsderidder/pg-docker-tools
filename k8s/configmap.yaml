@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgtools-config
+data:
+  config.yaml: |
+    defaults:
+      dump_format: "custom"
+
+    databases:
+      app:
+        prod:
+          pg_version: "16"
+          host: db.example.com
+          db: app
+          user: app
+          exclude_data:
+            - audit_log
+            - job_log
