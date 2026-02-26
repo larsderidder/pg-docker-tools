@@ -1,6 +1,12 @@
 defaults:
   dump_format: "custom"
 
+# Optional: configure S3-compatible shipping via pg_ship.sh
+# ship:
+#   bucket: my-backups
+#   prefix: pgbackups          # key prefix inside the bucket (default: pgbackups)
+#   endpoint: https://s3.garage.example.com   # omit for AWS S3
+
 # Example configuration. Duplicate entries for each environment you use.
 databases:
   app:

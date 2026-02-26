@@ -76,6 +76,92 @@ pg_restore -l backups/app/prod/app_20240101_120000.dump > toc.list
 ./bin/pg_restore.sh app prod backups/app/prod/app_20240101_120000.dump --toc toc.list
 ```
 
+## Shipping dumps to S3
+
+`pg_ship.sh` uploads a dump file or directory to any S3-compatible store: AWS S3, [Garage](https://garagehq.deuxfleurs.fr/), MinIO, Tigris, Cloudflare R2, etc.
+
+### Requirements
+
+- [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- S3 credentials in the environment: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`
+
+### Configure
+
+Add a `ship` block to `config.yaml`:
+
+```yaml
+ship:
+  bucket: my-backups
+  prefix: pgbackups            # key prefix inside the bucket (default: pgbackups)
+  endpoint: https://s3.garage.example.com   # omit for AWS S3
+```
+
+Or pass flags directly — no config needed.
+
+### Usage
+
+```bash
+# Ship a dump, read bucket/endpoint from config.yaml
+pg_ship.sh backups/app/prod/app_20260101_020000.dump
+
+# Ship to a specific bucket on AWS S3
+pg_ship.sh backups/app/prod/app_20260101_020000.dump \
+  --bucket my-backups --prefix pgbackups/app/prod
+
+# Ship to Garage (or MinIO, R2, Tigris, etc.)
+pg_ship.sh backups/app/prod/app_20260101_020000.dump \
+  --bucket my-backups \
+  --endpoint https://s3.garage.example.com
+
+# Ship and remove the local file after upload
+pg_ship.sh backups/app/prod/app_20260101_020000.dump --delete-after
+```
+
+The `.sha256` checksum file is uploaded alongside the dump automatically. Pass `--no-checksum` to skip it.
+
+### Dump and ship in one go
+
+```bash
+./bin/pg_dump.sh app prod --keep-days 7
+./bin/pg_ship.sh backups/app/prod/app_$(date +%Y%m%d)_*.dump --delete-after
+```
+
+Or in a cron job:
+
+```bash
+0 2 * * * deploy \
+  PGPASSWORD_APP_PROD=secret /opt/pgtools/bin/pg_dump.sh app prod --keep-days 7 \
+  && AWS_ACCESS_KEY_ID=key AWS_SECRET_ACCESS_KEY=secret \
+     /opt/pgtools/bin/pg_ship.sh "$(ls -1t /opt/pgtools/backups/app/prod/*.dump | head -1)" \
+     --delete-after \
+  >> /var/log/pgtools.log 2>&1
+```
+
+### Setting up Garage
+
+[Garage](https://garagehq.deuxfleurs.fr/) is a lightweight self-hosted S3-compatible store, useful if you want off-machine backups without a cloud dependency.
+
+1. [Install and start Garage](https://garagehq.deuxfleurs.fr/documentation/quick-start/)
+2. Create a bucket and access key:
+
+```bash
+garage bucket create pg-backups
+garage key create pg-backup-key
+garage bucket allow pg-backups --read --write --key pg-backup-key
+```
+
+3. Export credentials and ship:
+
+```bash
+export AWS_ACCESS_KEY_ID=<key-id>
+export AWS_SECRET_ACCESS_KEY=<secret>
+export AWS_DEFAULT_REGION=garage   # any non-empty string works
+
+./bin/pg_ship.sh backups/app/prod/app_20260101_020000.dump \
+  --bucket pg-backups \
+  --endpoint http://localhost:3900
+```
+
 ## Backup and restore procedures
 
 ### Setting up for a new project
