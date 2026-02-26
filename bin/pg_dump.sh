@@ -152,7 +152,7 @@ PASSWORD_VAR="${PASS_ENV_NAME:-PGPASSWORD_${DB_ID^^}_${TARGET_ENV^^}}"
 export PGPASSWORD="$(eval echo \$$PASSWORD_VAR)"
 : "${PGPASSWORD:?$PASSWORD_VAR is not set}"
 
-DUMP_FORMAT="${DUMP_FORMAT:-$(yq -r '.defaults.dump_format // "custom"' "$CONF_PATH") }"
+DUMP_FORMAT="${DUMP_FORMAT:-$(yq -r '.defaults.dump_format // "custom"' "$CONF_PATH")}"
 
 PG_VER=$(yq -r "$CFG_ROOT.pg_version" "$CONF_PATH")
 HOST=$(yq -r "$CFG_ROOT.host" "$CONF_PATH")
