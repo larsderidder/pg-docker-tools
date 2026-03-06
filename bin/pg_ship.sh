@@ -155,7 +155,11 @@ if [[ "$UPLOAD_CHECKSUM" == "yes" && -f "${DUMP_PATH}.sha256" ]]; then
 fi
 
 if [[ "$DELETE_AFTER" == "yes" ]]; then
-  rm -rf "$DUMP_PATH" "${DUMP_PATH}.sha256"
+  if [[ -d "$DUMP_PATH" ]]; then
+    rm -rf "${DUMP_PATH:?}/"*
+  else
+    rm -f "$DUMP_PATH" "${DUMP_PATH}.sha256"
+  fi
   log "Local dump deleted"
 fi
 
