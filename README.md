@@ -119,6 +119,38 @@ pg_ship.sh backups/app/prod/app_20260101_020000.dump --delete-after
 
 The `.sha256` checksum file is uploaded alongside the dump automatically. Pass `--no-checksum` to skip it.
 
+## Fetching dumps from S3
+
+`pg_fetch.sh` downloads a dump from any S3-compatible store back to a local path. It is the complement to `pg_ship.sh`.
+
+```bash
+# Fetch using bucket/endpoint from config.yaml
+pg_fetch.sh pgbackups/app/prod/app_20260101_020000.dump --config config.yaml
+
+# Fetch from AWS S3 with explicit bucket, save to backups/
+pg_fetch.sh pgbackups/app/prod/app_20260101_020000.dump \
+  --bucket my-backups --output backups/app/prod/
+
+# Fetch from Garage (or R2, Tigris, etc.)
+pg_fetch.sh pgbackups/app/prod/app_20260101_020000.dump \
+  --bucket my-backups \
+  --endpoint https://s3.garage.example.com \
+  --output backups/app/prod/
+
+# Fetch using a full s3:// URI
+pg_fetch.sh s3://my-backups/pgbackups/app/prod/app_20260101_020000.dump
+```
+
+The `.sha256` checksum is downloaded and verified automatically. Pass `--no-checksum` to skip.
+
+### Fetch and restore in one go
+
+```bash
+./bin/pg_fetch.sh pgbackups/app/prod/app_20260101_020000.dump \
+  --config config.yaml --output backups/app/prod/
+./bin/pg_restore.sh app local backups/app/prod/app_20260101_020000.dump --no-clean
+```
+
 ### Dump and ship in one go
 
 ```bash
