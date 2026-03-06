@@ -355,24 +355,36 @@ bash -n bin/*.sh
 
 ## Docker image
 
+Images are published to Docker Hub for PostgreSQL versions 13 through 17:
+
+```
+larsderidder/pg-docker-tools:pg13
+larsderidder/pg-docker-tools:pg14
+larsderidder/pg-docker-tools:pg15
+larsderidder/pg-docker-tools:pg16
+larsderidder/pg-docker-tools:pg17
+larsderidder/pg-docker-tools:latest   # same as pg17
+```
+
+Pull the tag that matches your PostgreSQL version:
+
+```bash
+docker pull larsderidder/pg-docker-tools:pg16
+```
+
+To build locally for a specific version:
+
 ```bash
 docker build -t pg-docker-tools . \
   --build-arg PG_CLIENT_VERSION=16 \
   --build-arg YQ_VERSION=v4.44.1
 ```
 
-## Publish image (GHCR)
+## Publishing a release
 
-Tag a release to publish:
+Tag a release to trigger the build:
 
 ```bash
 git tag pg-docker-tools-v0.1.0
 git push origin pg-docker-tools-v0.1.0
-```
-
-Images are pushed to:
-
-```
-larsderidder/pg-docker-tools:0.1.0
-larsderidder/pg-docker-tools:latest
 ```
