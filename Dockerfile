@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -29,8 +29,9 @@ RUN curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -
   && rm -rf /tmp/awscliv2.zip /tmp/aws
 
 # Install yq v4
-RUN curl -fsSL -o /usr/local/bin/yq \
-    "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" \
+RUN ARCH="$(dpkg --print-architecture)" \
+  && curl -fsSL -o /usr/local/bin/yq \
+    "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${ARCH}" \
   && chmod +x /usr/local/bin/yq
 
 WORKDIR /opt/pgtools
