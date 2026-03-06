@@ -341,6 +341,6 @@ git push origin pg-docker-tools-v0.1.0
 Images are pushed to:
 
 ```
-ghcr.io/larsderidder/pg-docker-tools:0.1.0
-ghcr.io/larsderidder/pg-docker-tools:latest
+larsderidder/pg-docker-tools:0.1.0
+larsderidder/pg-docker-tools:latest
 ```
