@@ -2,3 +2,9 @@ backups/
 tests/backups/
 .pi/
 .idea/
+
+.env
+.env.*
+!.env.example
+project-export-*.csv
+assignee-map.json
