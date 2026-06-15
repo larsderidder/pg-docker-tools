@@ -149,7 +149,11 @@ fi
 CFG_ROOT=".databases.$DB_ID.$TARGET_ENV"
 
 PASSWORD_VAR="${PASS_ENV_NAME:-PGPASSWORD_${DB_ID^^}_${TARGET_ENV^^}}"
-export PGPASSWORD="$(eval echo \$$PASSWORD_VAR)"
+if [[ ! "$PASSWORD_VAR" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+  echo "Invalid password environment variable name: $PASSWORD_VAR"
+  exit 1
+fi
+export PGPASSWORD="${!PASSWORD_VAR:-}"
 : "${PGPASSWORD:?$PASSWORD_VAR is not set}"
 
 DUMP_FORMAT="${DUMP_FORMAT:-$(yq -r '.defaults.dump_format // "custom"' "$CONF_PATH")}"

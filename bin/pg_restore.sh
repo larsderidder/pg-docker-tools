@@ -114,7 +114,11 @@ DUMP_PATH="$(realpath "$DUMP_PATH")"
 DOCKER_DUMP_PATH="$(realpath --relative-to="$PWD" "$DUMP_PATH")"
 
 PASSWORD_VAR="${PASS_ENV_NAME:-PGPASSWORD_${DB_ID^^}_${TARGET_ENV^^}}"
-export PGPASSWORD="$(eval echo \$$PASSWORD_VAR)"
+if [[ ! "$PASSWORD_VAR" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+  echo "Invalid password environment variable name: $PASSWORD_VAR"
+  exit 1
+fi
+export PGPASSWORD="${!PASSWORD_VAR:-}"
 : "${PGPASSWORD:?$PASSWORD_VAR is not set}"
 
 PG_VER=$(yq -r "$CFG_ROOT.pg_version" "$CONF_PATH")
